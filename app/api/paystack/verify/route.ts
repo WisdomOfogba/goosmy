@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
     );
     const verification = await verify.json();
 
+    //console.log("Verification response:", verification);
+
     if (verification.data.status !== "success") {
       return NextResponse.json(
         { error: "Payment not verified" },

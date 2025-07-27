@@ -29,8 +29,8 @@ useEffect(() => {
 
   const verifyPayment = async (trx_ref: string) => {
     try {
-      const response = await axios.post("/api/paystack/verify", { trx_ref });
-      console.log("Payment verification response:", response.data);
+      await axios.post("/api/paystack/verify", { trx_ref });
+      
       setStatus("success");
       await onVerificationComplete();
     } catch (error) {

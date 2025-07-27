@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log("Assignment found:", assignment);
+   // console.log("Assignment found:", assignment);
 
     return NextResponse.json({
       assignmentId: assignment.assignmentId,
