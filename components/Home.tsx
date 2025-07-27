@@ -13,6 +13,7 @@ export interface StudentData {
   fullName: string;
   email: string;
   matricNumber: string;
+  department: string; 
 }
 
 export interface AssignmentData {
@@ -29,6 +30,7 @@ export function Home() {
   const name = searchParams.get("name")!;
   const matric = searchParams.get("matric")!;
   const email = searchParams.get("email")!;
+  const department = searchParams.get("department")!;
   const trx_ref = searchParams.get("trxref")!;
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<
@@ -45,6 +47,7 @@ export function Home() {
     fullName: "",
     email: "",
     matricNumber: "",
+    department: "",
   });
   const [assignmentData, setAssignmentData] = useState<AssignmentData | null>(
     null
@@ -56,12 +59,13 @@ export function Home() {
         fullName: name,
         email: email,
         matricNumber: matric,
+        department: department,
       });
     }
     if (trx_ref) {
       setCurrentStep("verification");
     }
-  }, [name, matric, email, trx_ref]);
+  }, [name, matric, email, department, trx_ref]);
 
   const handleGetStarted = () => setCurrentStep("form");
   const handleSearchAssignment = () => setCurrentStep("search");
@@ -76,6 +80,7 @@ export function Home() {
         fullName: studentData.fullName,
         matricNumber: studentData.matricNumber,
         email: studentData.email,
+        department: studentData.department,
         trx_ref,
       });
       console.log("Assignment generated:", response.data);

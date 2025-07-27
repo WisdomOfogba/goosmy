@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { fullName, matricNumber, email } = body;
+  const { fullName, matricNumber, email, department } = body;
 
   const response = await fetch('https://api.paystack.co/transaction/initialize', {
     method: 'POST',
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       email,
       amount: 1000 * 100, // Kobo
-      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cos-assignment?email=${encodeURIComponent(email)}&name=${encodeURIComponent(fullName)}&matric=${encodeURIComponent(matricNumber)}`,
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cos-assignment?email=${encodeURIComponent(email)}&name=${encodeURIComponent(fullName)}&matric=${encodeURIComponent(matricNumber)}&department=${encodeURIComponent(department)}`,
       metadata: { fullName, matricNumber },
     }),
   });

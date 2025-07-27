@@ -17,6 +17,7 @@ interface FormErrors {
   fullName?: string;
   email?: string;
   matricNumber?: string;
+  department?: string;
 }
 
 export default function StudentForm({ onSubmit, onBack }: StudentFormProps) {
@@ -25,6 +26,7 @@ export default function StudentForm({ onSubmit, onBack }: StudentFormProps) {
     fullName: "",
     email: "",
     matricNumber: "",
+    department: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +52,12 @@ export default function StudentForm({ onSubmit, onBack }: StudentFormProps) {
       newErrors.matricNumber = "Format: 9 digits, e.g. 240******";
     }
 
+    if (!formData.department.trim()) {
+      newErrors.department = "Department is required";
+    } else if (formData.department.trim().length < 2) {
+      newErrors.department = "Department must be at least 2 characters";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -64,12 +72,14 @@ export default function StudentForm({ onSubmit, onBack }: StudentFormProps) {
           fullName: formData.fullName.trim(),
           email: formData.email.trim().toLowerCase(),
           matricNumber: formData.matricNumber.trim().toUpperCase(),
+          department: formData.department.trim(),
         });
         router.push(data.data.url);
       onSubmit({
         fullName: formData.fullName.trim(),
         email: formData.email.trim().toLowerCase(),
         matricNumber: formData.matricNumber.trim().toUpperCase(),
+        department: formData.department.trim(),
       });
     } catch (error) {
       console.error("Submission error:", error);
@@ -186,6 +196,36 @@ export default function StudentForm({ onSubmit, onBack }: StudentFormProps) {
                 <div className="flex items-center space-x-1 mt-2 text-red-600 text-sm">
                   <AlertCircle className="w-4 h-4" />
                   <span>{errors.matricNumber}</span>
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <label
+                htmlFor="department"
+                className="block text-sm font-medium mb-2"
+              >
+                Department
+              </label>
+              <div className="relative">
+                <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  id="department"
+                  value={formData.department}
+                  onChange={(e) =>
+                    handleInputChange("department", e.target.value)
+                  }
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.department ? "border-red-300" : "border-gray-300"
+                  }`}
+                  placeholder="Statistics"
+                />
+              </div>
+              {errors.department && (
+                <div className="flex items-center space-x-1 mt-2 text-red-600 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>{errors.department}</span>
                 </div>
               )}
             </div>

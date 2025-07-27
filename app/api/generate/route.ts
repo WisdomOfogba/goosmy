@@ -21,9 +21,9 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
-  const { fullName, matricNumber, email, trx_ref } = await req.json();
+  const { fullName, matricNumber, email, department, trx_ref } = await req.json();
 
-  if (!fullName || !matricNumber || !email || !trx_ref) {
+  if (!fullName || !matricNumber || !email || !department   || !trx_ref) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
@@ -136,6 +136,7 @@ export async function POST(req: NextRequest) {
       <div class="header">
         <p><strong>Name:</strong> ${fullName}</p>
         <p><strong>Matric No:</strong> ${matricNumber}</p>
+        <p><strong>Department:</strong> ${department}</p>
         <p><strong>Email:</strong> ${email}</p>
       </div>
       <hr />
@@ -192,6 +193,7 @@ export async function POST(req: NextRequest) {
     const assignment = await Assignment.create({
       fullName,
       matricNumber,
+      department,
       email,
       pdfUrl,
       assignmentId: `COS102_${Date.now().toString().slice(-6)}_${Math.random()
