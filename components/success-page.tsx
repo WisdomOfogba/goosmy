@@ -10,7 +10,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import type { AssignmentData } from "@/app/cos-assignment/page";
+import type { AssignmentData } from "@/components/Home";
 
 interface SuccessPageProps {
   assignmentData: AssignmentData;

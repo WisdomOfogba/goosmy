@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import { ArrowLeft, User, Mail, Hash, AlertCircle } from "lucide-react";
-import type { StudentData } from "@/app/cos-assignment/page";
+import type { StudentData } from "@/components/Home";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
