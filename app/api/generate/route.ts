@@ -66,11 +66,85 @@ export async function POST(req: NextRequest) {
     5. Write a Python program to print even numbers from 1 to 200 and compute their average.
     6. A store charges different prices based on quantity. Write a program to calculate total cost.
     7. Write a program to create a list of increasing 1's like [1, 11, 111, ...] up to 100 .
+
     Include well-indented code blocks and detailed explanations.
+    no 1 should be in a table format.
+    Note: you must never truncate any code, whether it is the question, code, or output.
+    Ensure the output is in full and not truncated.
 `;
 
     const markdown = await generateAnswer(prompt);
     const assignmentText = marked(markdown);
+
+    const codeThemes = [
+    {
+    background: "#1e1e1e",
+    color: "#dcdcdc",
+    font: "Consolas, monospace",
+    borderRadius: "8px"
+    },
+    {
+    background: "#2d2a55",
+    color: "#f8f8f2",
+    font: "'Fira Code', monospace",
+    borderRadius: "6px"
+    },
+    {
+    background: "#282c34",
+    color: "#abb2bf",
+    font: "'Source Code Pro', monospace",
+    borderRadius: "10px"
+    },
+    {
+    background: "#23272e",
+    color: "#e6e6e6",
+    font: "'JetBrains Mono', monospace",
+    borderRadius: "7px"
+    },
+    {
+    background: "#263238",
+    color: "#c3e88d",
+    font: "'Roboto Mono', monospace",
+    borderRadius: "8px"
+    },
+    {
+    background: "#011627",
+    color: "#d6deeb",
+    font: "'Menlo', monospace",
+    borderRadius: "8px"
+    },
+    {
+    background: "#3c3c3c",
+    color: "#ffd700",
+    font: "'Monaco', monospace",
+    borderRadius: "6px"
+    },
+    {
+    background: "#212121",
+    color: "#80cbc4",
+    font: "'Hack', monospace",
+    borderRadius: "9px"
+    },
+    {
+    background: "#22212c",
+    color: "#ff79c6",
+    font: "'Cascadia Code', monospace",
+    borderRadius: "8px"
+    },
+    {
+    background: "#282a36",
+    color: "#f1fa8c",
+    font: "'IBM Plex Mono', monospace",
+    borderRadius: "7px"
+    },
+  ];
+const headingColors = ["#003366", "#800000", "#008080", "#4B0082", "#FF4500", "#2E8B57", "#6A5ACD", "#B22222", "#006400", "#000080"];
+
+const selectedTheme = codeThemes[Math.floor(Math.random() * codeThemes.length)];
+
+const selectedHeadingColor = headingColors[Math.floor(Math.random() * headingColors.length)];
+
+
 
     // 2. Create styled HTML
     const html = `
@@ -88,33 +162,40 @@ export async function POST(req: NextRequest) {
           color: #000;
           padding: 0;
         }
-        h1, h2, h3 {
-          color: #000033;
-          font-weight: bold;
-          margin-top: 24pt;
-          margin-bottom: 12pt;
-        }
+h1, h2, h3 {
+  color: ${selectedHeadingColor};
+  font-weight: bold;
+  margin-top: 24pt;
+  margin-bottom: 12pt;
+}
+
         p {
           margin: 12pt 0;
         }
-        pre {
-          font-family: "Courier New", monospace;
-          font-size: 10pt;
-          background-color: #f3f3f3;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          padding: 12px;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          margin: 16pt 0;
-        }
-        code {
-          font-family: "Courier New", monospace;
-          font-size: 10pt;
-          background-color: #f3f3f3;
-          padding: 2px 4px;
-          border-radius: 4px;
-        }
+pre {
+  font-family: ${selectedTheme.font};
+  font-size: 10pt;
+  background-color: ${selectedTheme.background};
+  color: ${selectedTheme.color};
+  border-radius: ${selectedTheme.borderRadius};
+  padding: 12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 16pt 0;
+  border: 1px solid #333;
+}
+
+
+        pre:nth-of-type(even) {
+  background-color: #000;
+  color: #33FF33;
+  font-family: "Courier New", monospace;
+  font-size: 10pt;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 10pt 0;
+  white-space: pre-wrap;
+}
         .page-break {
           page-break-before: always;
         }
