@@ -1,3 +1,4 @@
+import dbConnect from "@/lib/mongo";
 import Assignment from "@/models/Assignment";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,6 +7,7 @@ export async function GET(req: NextRequest) {
   const assignmentId = searchParams.get("assignmentId");
 
   try {
+        await dbConnect();
     const assignment = await Assignment.findOne({ assignmentId });
     if (!assignment) {
       return NextResponse.json(
