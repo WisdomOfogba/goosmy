@@ -1,9 +1,13 @@
-import React from 'react'
+"use client";
 
-const page = () => {
+import { Home } from "@/components/Home";
+import { Suspense } from "react";
+
+
+export default function page() {
   return (
-    <div>page</div>
-  )
+    <Suspense fallback={<div>Loading...</div>}>
+      <Home />
+    </Suspense>
+  );
 }
-
-export default page
