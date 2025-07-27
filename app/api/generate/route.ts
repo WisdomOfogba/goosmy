@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongo";
 import Assignment from "@/models/Assignment";
 import fs from "fs";
 import path from "path";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import { v4 as uuidv4 } from "uuid";
 import { generateAnswer } from "@/lib/gemini";
 import os from "os";
@@ -76,7 +76,11 @@ export async function POST(req: NextRequest) {
     const html = `
   <html>
     <head>
-    <style>
+      <style>
+        @page {
+          size: A4;
+          margin: 1.54cm 2.17cm;
+        }
         body {
           font-family: Arial, Helvetica, sans-serif;
           font-size: 12pt;
@@ -84,18 +88,15 @@ export async function POST(req: NextRequest) {
           color: #000;
           padding: 0;
         }
-
         h1, h2, h3 {
           color: #000033;
           font-weight: bold;
           margin-top: 24pt;
           margin-bottom: 12pt;
         }
-
         p {
           margin: 12pt 0;
         }
-
         pre {
           font-family: "Courier New", monospace;
           font-size: 10pt;
@@ -107,7 +108,6 @@ export async function POST(req: NextRequest) {
           word-wrap: break-word;
           margin: 16pt 0;
         }
-
         code {
           font-family: "Courier New", monospace;
           font-size: 10pt;
@@ -115,17 +115,14 @@ export async function POST(req: NextRequest) {
           padding: 2px 4px;
           border-radius: 4px;
         }
-
         .page-break {
           page-break-before: always;
         }
-
         hr {
           border: none;
           border-top: 2px solid #000;
           margin: 30pt 0;
         }
-
         .page {
           page-break-after: always;
         }
@@ -139,16 +136,32 @@ export async function POST(req: NextRequest) {
       </div>
       <hr />
       <div class="content">
-        ${assignmentText}
+      ${assignmentText}
       </div>
     </body>
   </html>
-  `;
+`;
+
+    const TOKEN = process.env.BROWSERLESS_API_KEY;
+    if (!TOKEN) {
+      return NextResponse.json(
+        { error: "Browserless API key is not set" },
+        { status: 500 }
+      );
+    }
 
     const pdfPath = path.join(tmpDir, `${uuidv4()}.pdf`);
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.connect({
+      browserWSEndpoint: `wss://production-sfo.browserless.io?token=${TOKEN}`,
+    });
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    // ✅ Set the HTML content before generating PDF
+    await page.setContent(html, {
+      waitUntil: "domcontentloaded",
+      timeout: 100000,
+    });
+
     await page.pdf({
       path: pdfPath,
       format: "A4",
@@ -162,12 +175,14 @@ export async function POST(req: NextRequest) {
     });
     await browser.close();
 
+    // Upload to Cloudinary
     const cloudResult = await cloudinary.uploader.upload(pdfPath, {
       resource_type: "raw",
       folder: "assignments",
       type: "upload",
     });
     fs.unlinkSync(pdfPath);
+
     const pdfUrl = cloudResult.secure_url;
 
     const assignment = await Assignment.create({
@@ -184,12 +199,16 @@ export async function POST(req: NextRequest) {
     await assignment.save();
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER!,
         pass: process.env.EMAIL_PASS!,
       },
     });
+
+    console.log("Using port", transporter.options);
 
     await transporter.sendMail({
       from: `Assignment Bot <${process.env.EMAIL_USER}>`,
