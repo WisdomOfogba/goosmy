@@ -11,7 +11,6 @@ import { generateAnswer } from "@/lib/gemini";
 import os from "os";
 import { marked } from "marked";
 import Payment from "@/models/Payment";
-import axios from "axios";
 const tmpDir = os.tmpdir();
 
 cloudinary.config({
@@ -202,11 +201,6 @@ export async function POST(req: NextRequest) {
         .toUpperCase()}`,
     });
 
-    const pdfResponse = await axios.get(pdfUrl, {
-      responseType: "arraybuffer",
-    });
-    const pdfBase64 = Buffer.from(pdfResponse.data).toString("base64");
-
     await assignment.save();
 
     const transporter = nodemailer.createTransport({
@@ -222,95 +216,49 @@ export async function POST(req: NextRequest) {
       to: email,
       subject: "Your COS102 Assignment PDF",
       html: `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; color: #333;">
-  <tr>
+    <tr>
     <td style="padding: 20px;">
       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-        Hi ${fullName},
+      Hi ${fullName},
       </p>
 
       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-        Thank you for your submission. We're pleased to let you know that your assignment has been successfully generated and is now ready for download.
+      Thank you for your submission. We're pleased to let you know that your assignment has been successfully generated and is now ready for download.
       </p>
 
       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-        Please find your personalized assignment PDF using the link below.
+      <strong>Assignment ID:</strong> ${assignment.assignmentId}
+      </p>
+
+      <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
+      Please find your personalized assignment PDF using the link below. 
       </p>
 
       <p style="margin: 24px 0;">
-        <a href="${pdfUrl}" target="_blank" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 20px; font-size: 16px; border-radius: 4px;">
-          Download Your Assignment PDF
-        </a>
+      <a href="${pdfUrl}" target="_blank" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 20px; font-size: 16px; border-radius: 4px;">
+        Download Your Assignment PDF
+      </a>
       </p>
 
       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-        If you have any questions or need assistance, feel free to reply to this email — we're here to help!
+      If you have any questions or need assistance, feel free to reply to this email — we're here to help!
       </p>
 
       <p style="font-size: 16px; line-height: 1.6; margin: 32px 0 0;">
-        Best regards,<br />
-        <strong>The COS102 Team</strong>
+      Best regards,<br />
+      <strong>The COS102 Team</strong>
       </p>
     </td>
-  </tr>
-</table>
-`,
+    </tr>
+  </table>
+  `,
       attachments: [
-        {
-          filename: `COS102_Assignment_${assignment.matricNumber}.pdf`,
-          content: pdfBase64,
-          contentType: "application/pdf",
-        },
+      {
+        filename: `COS102_Assignment_${assignment.matricNumber}.pdf`,
+        path: pdfUrl,
+      },
       ],
     });
-
-    //     const transporter = nodemailer.createTransport({
-    //       host: "smtp.gmail.com",
-    //       port: 587,
-    //       secure: false,
-    //       auth: {
-    //         user: process.env.EMAIL_USER!,
-    //         pass: process.env.EMAIL_PASS!,
-    //       },
-    //     });
-
-    //     await transporter.sendMail({
-    //       from: `Assignment Bot <${process.env.EMAIL_USER}>`,
-    //       to: email,
-    //       subject: "Your COS102 Assignment PDF",
-    //       html: `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; color: #333;">
-    //   <tr>
-    //     <td style="padding: 20px;">
-    //       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-    //         Hi ${fullName},
-    //       </p>
-
-    //       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-    //         Thank you for your submission. We're pleased to let you know that your assignment has been successfully generated and is now ready for download.
-    //       </p>
-
-    //       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-    //         Please find your personalized assignment PDF using the link below.
-    //       </p>
-
-    //       <p style="margin: 24px 0;">
-    //         <a href="${pdfUrl}" target="_blank" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 20px; font-size: 16px; border-radius: 4px;">
-    //           Download Your Assignment PDF
-    //         </a>
-    //       </p>
-
-    //       <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-    //         If you have any questions or need assistance, feel free to reply to this email — we're here to help!
-    //       </p>
-
-    //       <p style="font-size: 16px; line-height: 1.6; margin: 32px 0 0;">
-    //         Best regards,<br />
-    //         <strong>The COS102 Team</strong>
-    //       </p>
-    //     </td>
-    //   </tr>
-    // </table>
-    // `,
-    //     });
 
     const newPayment = await Payment.create({
       trx_ref,
