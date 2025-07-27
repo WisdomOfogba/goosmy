@@ -51,9 +51,9 @@ export async function POST(req: NextRequest) {
     // 1. Generate answer
     const prompt = `
     Generate a university-level Python programming assignment for the following 7 questions. Structure the response with 'COS102 Assignment' at the top. Then, for each question, provide a numbered section that includes:
-    The question restated briefly.
-    Well-indented Python code with unique variable names and values.
-    The expected full output also in a code block,
+    The question stated.
+    Well-indented Python code(that does exactly what the question asks) with unique variable names and values.
+    The expected output in full(no shortening) also in a code block,
     Ensure all answers are unique in code style, variable names, and explanation tone.
 
     Assignment questions:

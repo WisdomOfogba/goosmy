@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 import axios from "axios";
 
@@ -17,6 +17,16 @@ export default function VerificationPage({
     "verifying"
   );
 
+  const hasVerifiedRef = useRef(false);
+
+useEffect(() => {
+  if (hasVerifiedRef.current) return;
+  hasVerifiedRef.current = true;
+
+  verifyPayment(trx_ref);
+}, [trx_ref]);
+
+
   const verifyPayment = async (trx_ref: string) => {
     try {
       const response = await axios.post("/api/paystack/verify", { trx_ref });
@@ -28,10 +38,6 @@ export default function VerificationPage({
       setStatus("failed");
     }
   };
-
-  useEffect(() => {
-    verifyPayment(trx_ref);
-  }, [trx_ref]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
