@@ -10,5 +10,6 @@ const AssignmentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+
 export default mongoose.models.Assignment ||
   mongoose.model("Assignment", AssignmentSchema);
