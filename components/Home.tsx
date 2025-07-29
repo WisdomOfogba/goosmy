@@ -171,7 +171,7 @@ export function Home() {
                   This usually takes a few seconds
                 </p>
               </>
-              <p className="text-sm text-red-500 mt-2">
+              <p className="text-sm text-orange-300 mt-2">
                 Do not leave or close this tab until the process is complete.
               </p>
             </div>
